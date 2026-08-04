@@ -1,0 +1,39 @@
+server:
+  port: 8080 # Gateway luôn chạy ở cổng mặc định 8080
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      server:
+        webmvc:
+          routes:
+            - id: venue-service-route
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/venues/**, /api/venues
+
+            - id: event-service-route
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/events/**, /api/events
+
+            - id: ticket-category-service-route
+              uri: http://localhost:8082
+              predicates:
+                - Path=/api/tickets/**, /api/tickets
+
+            - id: auth-service-route
+              uri: http://localhost:8081
+              predicates:
+                - Path=/api/auth/**, /api/auth
+                
+            - id: booking-service-route
+              uri: http://localhost:8083
+              predicates:
+                - Path=/api/bookings/**, /api/bookings
+            - id: payment-service-route
+              uri: http://localhost:8084
+              predicates:
+                - Path=/api/payments/**, /api/payments

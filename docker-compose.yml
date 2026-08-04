@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  # Database cho Auth Service
+  auth-db:
+    image: postgres:15-alpine
+    container_name: auth-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: auth_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+
+  # Database cho Event Service
+  event-db:
+    image: postgres:15-alpine
+    container_name: event-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: event_db
+    ports:
+      - "5433:5432" # Chú ý: Port trên máy host là 5433 để không trùng với auth-db
+    volumes:
+      - event-db-data:/var/lib/postgresql/data
+  booking-db:
+    image: postgres:15-alpine
+    container_name: booking-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: booking_db
+    ports:
+      - "5434:5432" # Chú ý: Port trên máy host là 5433 để không trùng với auth-db
+    volumes:
+      - booking-db-data:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"   # Cổng để code Java kết nối vào
+      - "15672:15672" # Cổng Dashboard Web
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+  
+  payment-db:
+    image: postgres:15-alpine
+    container_name: payment-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: payment_db
+    ports:
+      - "5435:5432" 
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+volumes:
+  auth-db-data:
+  event-db-data:
+  booking-db-data:
+  payment-db-data:
