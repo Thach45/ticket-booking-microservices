@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,12 +25,20 @@ public class PaymentService {
     private final BookingClient bookingClient;
 
     public Payment processPayment(PaymentRequest request) {
+        // Kiểm tra xem mã giao dịch đã tồn tại chưa
+        Optional<Payment> existingPayment = paymentRepository.findByIdempotencyKey(request.getIdempotencyKey());
+        if (existingPayment.isPresent()) {
+            System.out.println("⚠️ Phát hiện giao dịch lặp lại. Trả về hóa đơn cũ!");
+            return existingPayment.get();
+        }
+
         BookingResponse booking = bookingClient.getBookingById(request.getBookingId());
         if (!"PENDING".equals(booking.getStatus())) {
             throw new RuntimeException("Hóa đơn này không ở trạng thái chờ thanh toán!");
         }
         Payment payment = Payment.builder()
                 .bookingId(request.getBookingId())
+                .idempotencyKey(request.getIdempotencyKey())
                 .amount(booking.getTotalAmount()) 
                 .currency("VND")
                 .provider(request.getProvider())

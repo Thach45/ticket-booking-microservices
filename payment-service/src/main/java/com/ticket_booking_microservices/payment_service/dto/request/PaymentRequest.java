@@ -8,4 +8,7 @@ import lombok.Data;
 public class PaymentRequest {
     private UUID bookingId;
     private String provider; // "VNPAY" hoặc "STRIPE"
+    
+    // Thêm trường này: Cái "Căn cước" duy nhất cho mỗi nỗ lực thanh toán
+    private String idempotencyKey; 
 }

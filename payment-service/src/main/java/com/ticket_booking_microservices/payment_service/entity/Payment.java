@@ -23,6 +23,9 @@ public class Payment {
     @Column(name = "booking_id", nullable = false, updatable = false)
     private UUID bookingId; // Không bao giờ cho phép đổi booking_id sau khi tạo
 
+    // Thêm vào entity Payment
+    @Column(name = "idempotency_key", unique = true, nullable = false, updatable = false)
+    private String idempotencyKey;
     @Column(nullable = false)
     private BigDecimal amount;
 
