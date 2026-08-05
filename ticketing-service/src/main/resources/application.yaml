@@ -1,0 +1,17 @@
+server:
+  port: 8085
+spring:
+  application:
+    name: ticketing-service
+  datasource:
+    url: jdbc:postgresql://localhost:5436/ticketing_db
+    username: root
+    password: rootpassword
+  jpa:
+    hibernate:
+      ddl-auto: update
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest

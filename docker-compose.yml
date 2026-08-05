@@ -58,8 +58,22 @@ services:
       - "5435:5432" 
     volumes:
       - payment-db-data:/var/lib/postgresql/data
+
+  ticketing-db:
+    image: postgres:15-alpine
+    container_name: ticketing-db
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: ticketing_db
+    ports:
+      - "5436:5432"
+    volumes:
+      - ticketing-db-data:/var/lib/postgresql/data
 volumes:
   auth-db-data:
   event-db-data:
   booking-db-data:
   payment-db-data:
+  ticketing-db-data:
+  

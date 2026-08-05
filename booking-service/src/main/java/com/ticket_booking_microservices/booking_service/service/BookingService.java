@@ -2,6 +2,7 @@ package com.ticket_booking_microservices.booking_service.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import feign.FeignException;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -86,5 +88,9 @@ public class BookingService {
 
         public List<Booking> getAllBookings() {
                 return bookingRepository.findAll();
+        }
+        public Booking getBookingById(UUID id) {
+                return bookingRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Không tìm thấy hóa đơn"));
         }
 }

@@ -3,6 +3,7 @@ package com.ticket_booking_microservices.booking_service.controller;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,5 +26,9 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<List<Booking>> getAllBookings() {
         return ResponseEntity.ok(bookingService.getAllBookings());
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Booking> getBookingById(@PathVariable UUID id) {
+        return ResponseEntity.ok(bookingService.getBookingById(id));
     }
 }

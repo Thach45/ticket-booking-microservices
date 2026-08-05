@@ -3,8 +3,10 @@ package com.ticket_booking_microservices.payment_service.service;
 import com.ticket_booking_microservices.payment_service.config.RabbitMQConfig;
 import com.ticket_booking_microservices.payment_service.dto.event.PaymentSuccessEvent;
 import com.ticket_booking_microservices.payment_service.dto.request.PaymentRequest;
+import com.ticket_booking_microservices.payment_service.dto.response.BookingResponse;
 import com.ticket_booking_microservices.payment_service.entity.Payment;
 import com.ticket_booking_microservices.payment_service.enums.PaymentStatus;
+import com.ticket_booking_microservices.payment_service.feign.BookingClient;
 import com.ticket_booking_microservices.payment_service.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -19,13 +21,16 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final BookingClient bookingClient;
 
     public Payment processPayment(PaymentRequest request) {
-        
-        // GIẢ LẬP: Khách hàng luôn thanh toán thành công 9.000.000 VND qua VNPay
+        BookingResponse booking = bookingClient.getBookingById(request.getBookingId());
+        if (!"PENDING".equals(booking.getStatus())) {
+            throw new RuntimeException("Hóa đơn này không ở trạng thái chờ thanh toán!");
+        }
         Payment payment = Payment.builder()
                 .bookingId(request.getBookingId())
-                .amount(new BigDecimal("9000000")) // Tạm hardcode, thực tế phải lấy từ Booking
+                .amount(booking.getTotalAmount()) 
                 .currency("VND")
                 .provider(request.getProvider())
                 .status(PaymentStatus.SUCCESS)
